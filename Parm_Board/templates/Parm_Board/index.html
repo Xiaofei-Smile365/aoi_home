@@ -1,0 +1,423 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AOI Parameters Board</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'Parm_Board/css/bootstrap.min.css' %}">
+    <script src="{% static 'Parm_Board/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'Parm_Board/js/jquery.min.js' %}"></script>
+</head>
+<body style="background-color: #05163b">
+
+<div class="container-fluid">
+	<div class="row clearfix" style="background-image:url({% static 'Parm_Board/img/head_bg.png' %});background-size: cover">
+		<div class="col-md-3 column">
+			<div style="color: #b7e8f1">
+				AUO
+			</div>
+		</div>
+		<div class="col-md-6 column">
+			  <div style="color: #948bd4;text-align:center;">
+				<h1>AOI Parameters Board</h1>
+			  </div>
+		</div>
+		<div class="col-md-3 column">
+			<div id="realtime" style="color: #b7e8f1;text-align:right;">
+				1970/01/01 00:00:00
+			</div>
+			<script>
+				let t = null;
+				t = setTimeout(time,100);//開始运行
+				function time()
+				{
+					//获取秒
+					let t;
+					clearTimeout(t);//清除定时器
+					const dt = new Date();
+					const y = dt.getFullYear();
+					const mt = dt.getMonth() + 1;
+					const day = dt.getDate();
+					const h = dt.getHours();//获取时
+					const m = dt.getMinutes();//获取分
+					const s = dt.getSeconds();
+					t = null;
+					document.getElementById("realtime").innerHTML = y+"/"+Append_zero(mt)+"/"+Append_zero(day)+" "+Append_zero(h)+":"+Append_zero(m)+":"+Append_zero(s)+"";
+					function Append_zero(obj){
+						if(obj<10) return "0" +""+ obj;
+						else return obj;
+					}
+					t = setTimeout(time,1000); //设定定时器，循环运行
+				}
+			</script>
+		</div>
+	</div>
+        <br>
+	<div class="row clearfix" style="margin: auto;">
+        <div class="col-md-2 column">
+            <script type="text/javascript" src="{% static "Parm_Board/js/search_linkage.js" %}"></script>
+            <div style="color: #b7e8f1" title="">
+                <small>* PC Name</small>
+                <select type='text' style='width:160px; font-size: 12px' name='pc_name' id='pc_name'>
+                    <option value=""></option>
+                    {% for pc_name in pc_name_list %}
+                        <option value="{{ pc_name }}">{{ pc_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+            <div style="color: #b7e8f1">
+                <small>* Camera IP</small>
+                <select type='text' style='width:160px; font-size: 12px' name='camera_ip' id='camera_ip'>
+                    <option value=""></option>
+                    {% for camera_ip in camera_ip_list %}
+                        <option value="{{ camera_ip }}">{{ camera_ip }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+            <div style="color: #b7e8f1">
+                <small>* Func IP or Mura IP</small>
+                <select type='text' style='width:160px; font-size: 12px' name='func_ip_or_mura_ip' id='func_ip_or_mura_ip'>
+                    <option value=""></option>
+                    {% for func_ip_or_mura_ip in func_ip_or_mura_ip_list %}
+                        <option value="{{ func_ip_or_mura_ip }}">{{ func_ip_or_mura_ip }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+            <div style="color: #b7e8f1">
+                <small>* Model Name</small>
+                <select type='text' style='width:160px; font-size: 12px' name='model_name' id='model_name'>
+                    <option value=""></option>
+                    {% for model_name in model_name_list %}
+                        <option value="{{ model_name }}">{{ model_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+            <div style="color: #b7e8f1">
+                <small>* Pattern Name</small>
+                <select type='text' style='width:160px; font-size: 12px' name='pattern_name' id='pattern_name'>
+                    <option value=""></option>
+                    {% for pattern_name in pattern_name_list %}
+                        <option value="{{ pattern_name }}">{{ pattern_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2 column" style="padding: 20px">
+            <button type="submit" value="Search" onclick="search_parm()" style='height:25px;width:75px; font-size: 12px'>Search</button>
+        </div>
+	</div>
+    <div id="parm_body" class="row" style="margin: auto;height: 500px;width: 99%;padding: 3px;border: 1px solid darkblue;">
+        <script type="text/javascript" src="{% static "Parm_Board/js/search_parm.js" %}"></script>
+        <div id="parm_func" class="col-md-12 column" style="color: white;font-size: 16px;text-align: center">
+            <b>Func</b>
+            <div class="row" style="font-size: 14px;">
+                <div id="parm_func_point" class="col-md-4 column">
+                    <b>Point</b>
+                    <div class="row">
+                        <div id="parm_func_point_bp_point" class="col-md-6 column" style="font-size: 12px;">
+                            <b>BP Point</b>
+                            <div class="row">
+                                <div id="parm_func_point_bp_point_threshold_bp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Threshold BP: { Null }
+                                </div>
+                                <div id="parm_func_point_bp_point_threshold_bp_low" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Threshold BP Low: { Null }
+                                </div>
+                                <div id="parm_func_point_bp_point_thresholdrim_bp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    ThresholdRim BP: { Null }
+                                </div>
+                                <div id="parm_func_point_bp_point_thresholdrim_bp_low" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    ThresholdRim BP Low: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_func_point_dp_point" class="col-md-6 column" style="font-size: 12px;">
+                            <b>DP Point</b>
+                            <div class="row">
+                                <div id="parm_func_point_dp_point_threshold_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Threshold DP: { Null }
+                                </div>
+                                <div id="parm_func_point_dp_point_threshold_dp_low" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Threshold DP Low: { Null }
+                                </div>
+                                <div id="parm_func_point_dp_point_thresholdrim_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    ThresholdRim DP: { Null }
+                                </div>
+                                <div id="parm_func_point_dp_point_thresholdrim_dp_low" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    ThresholdRim DP Low: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_func_point_point_point_common_setting" class="col-md-6 column" style="font-size: 12px;">
+                            <b>Point Common Setting</b>
+                            <div class="row">
+                                <div id="parm_func_point_point_point_common_setting_areamax_bp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    AreaMax BP: { Null }
+                                </div>
+                                <div id="parm_func_point_point_point_common_setting_areamin_bp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    AreaMin BP: { Null }
+                                </div>
+                                <div id="parm_func_point_point_point_common_setting_areamax_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    AreaMax DP: { Null }
+                                </div>
+                                <div id="parm_func_point_point_point_common_setting_areamin_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    AreaMin DP: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_func_point_point_enable" class="col-md-6 column" style="font-size: 12px;">
+                            <b>Enable</b>
+                            <div class="row">
+                                <div id="parm_func_point_point_enable_point_enable" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Point Enable: { Null }
+                                </div>
+                                <div id="parm_func_point_point_enable_analysis_bp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Analysis BP: { Null }
+                                </div>
+                                <div id="parm_func_point_point_enable_analysis_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Analysis DP: { Null }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="parm_func_point_characteristics" class="col-md-4 column">
+                    <b>Point Characteristics</b>
+                    <div class="row">
+                        <div id="parm_func_point_characteristics_bp_characteristics" class="col-md-6 column" style="font-size: 12px;">
+                            <b>BP Characteristics</b>
+                            <div class="row">
+                                <div id="parm_func_point_characteristics_bp_characteristics_elongation_min" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Elongation Min: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_bp_characteristics_elongation_max" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Elongation Max: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_bp_characteristics_fullness_min" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Fullness Min: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_bp_characteristics_fullness_max" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Fullness Max: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_func_point_characteristics_dp_characteristics" class="col-md-6 column" style="font-size: 12px;">
+                            <b>DP Characteristics</b>
+                            <div class="row">
+                                <div id="parm_func_point_characteristics_dp_characteristics_elongation_min_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Elongation Min DP: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_dp_characteristics_elongation_max_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Elongation Max DP: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_dp_characteristics_fullness_min_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Fullness Min DP: { Null }
+                                </div>
+                                <div id="parm_func_point_characteristics_dp_characteristics_fullness_max_dp" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Fullness Max DP: { Null }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="parm_func_abnormal" class="col-md-4 column">
+                    <b>Abnormal</b>
+                    <div class="row">
+                        <div id="parm_func_abnormal_check_abnormal" class="col-md-6 column" style="font-size: 12px;">
+                            <b>Check Abnormal</b>
+                            <div class="row">
+                                <div id="parm_func_abnormal_check_abnormal_gray_abnormal_enable" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Gray Abnormal Enable: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_check_abnormal_data_refresh_time" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Data Refresh Time: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_check_abnormal_poslimit" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    PosLimit: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_check_abnormal_neglimit" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    NegLimit: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_func_abnormal_line" class="col-md-6 column" style="font-size: 12px;">
+                            <b>Line</b>
+                            <div class="row">
+                                <div id="parm_func_abnormal_line_line_cut_v" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Line Cut V: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_line_line_short_cut_v" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Line Short Cut V: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_line_line_cut_h" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Line Cut H: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_line_line_short_cut_h" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Line Short Cut H: { Null }
+                                </div>
+                                <div id="parm_func_abnormal_line_line_enable" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                    Line Enable: { Null }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="parm_mura" class="col-md-12 column" style="color: white;font-size: 16px;text-align: center">
+            <b>Mura</b>
+            <div class="row" style="font-size: 14px;">
+                <div id="parm_mura_center_by_pass_parm" class="col-md-6 column">
+                    <b>中央ByPass参数</b>
+                    <div class="row">
+                        <div id="parm_mura_center_by_pass_parm_white" class="col-md-6 column" style="font-size: 12px;">
+                            <b>White</b>
+                            <div class="row">
+                                <div id="parm_mura_center_by_pass_parm_white_white_macro_mura_threshold" class="col-md-12 column" style="font-size: 10px;text-align: center">
+                                    WhiteMacroMura Threshold: { Null }
+                                </div>
+                            </div>
+                        </div>
+                        <div id="parm_mura_center_by_pass_parm_black" class="col-md-6 column" style="font-size: 12px;">
+                            <b>Black</b>
+                            <div class="row">
+                                <div id="parm_mura_center_by_pass_parm_black_black_macro_mura_threshold" class="col-md-12 column" style="font-size: 10px;text-align: center">
+                                    BlackMacroMura Threshold: { Null }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="parm_mura_light_check_loss_point_parm" class="col-md-6 column">
+                    <b>亮校正与失焦参数</b>
+                    <div class="row">
+                        <div id="parm_mura_light_check_loss_point_parm_removehvband" class="col-md-12 column" style="font-size: 12px;">
+                            <b>RemoveHVBand</b>
+                            <div class="row">
+                                <div id="parm_mura_light_check_loss_point_parm_removehvband_removehvband" class="col-md-12 column" style="font-size: 10px;text-align: center">
+                                    Remove HV Band: { Null }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="font-size: 14px;">
+                    <div id="parm_mura_white_mura_setting" class="col-md-6 column">
+                        <b>White Mura Setting</b>
+                        <div class="row">
+                            <div id="parm_mura_white_mura_setting_white_blob_mura" class="col-md-6 column" style="font-size: 12px;">
+                                <b>White Blob Mura</b>
+                                <div class="row">
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_areamin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura AreaMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_areamax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura AreaMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_jndmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura JndMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_jndmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura JNDMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_elongationmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura ElongationMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_blob_mura_elongationmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteBlobMura ElongationMax: { Null }
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="parm_mura_white_mura_setting_white_around_gap_mura" class="col-md-6 column" style="font-size: 12px;">
+                                <b>White Around Gap Mura</b>
+                                <div class="row">
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_areamin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM AreaMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_areamax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM AreaMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_jndmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM JndMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_jndmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM JNDMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_elongationmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM ElongationMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_white_mura_setting_white_blob_mura_white_agm_elongationmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        WhiteAGM ElongationMax: { Null }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="parm_mura_black_mura_setting" class="col-md-6 column">
+                        <b>Black Mura Setting</b>
+                        <div class="row">
+                            <div id="parm_mura_black_mura_setting_black_blob_mura" class="col-md-6 column" style="font-size: 12px;">
+                                <b>Black Blob Mura</b>
+                                <div class="row">
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_areamin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura AreaMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_areamax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura AreaMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_jndmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura JndMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_jndmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura JNDMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_elongationmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura ElongationMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_blob_mura_elongationmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackBlobMura ElongationMax: { Null }
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="parm_mura_black_mura_setting_black_around_gap_mura" class="col-md-6 column" style="font-size: 12px;">
+                                <b>Black Around Gap Mura</b>
+                                <div class="row">
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_areamin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM AreaMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_areamax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM AreaMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_jndmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM JndMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_jndmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM JNDMax: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_elongationmin" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM ElongationMin: { Null }
+                                    </div>
+                                    <div id="parm_mura_black_mura_setting_black_blob_mura_black_agm_elongationmax" class="col-md-12 column" style="font-size: 10px;text-align: left">
+                                        BlackAGM ElongationMax: { Null }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
